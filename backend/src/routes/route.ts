@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/signup", Signup);
 router.post("/signin", Signin);
 router.get("/getsingleuser", auth, getSingleUser);
-router.get("/signout", signout);
+router.post("/signout", signout);
 router.post("/change-password", auth, changePassword);
 
 

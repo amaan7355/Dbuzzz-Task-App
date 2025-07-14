@@ -25,6 +25,7 @@ export const Signin = async (req: Request, res: Response) => {
         let token;
         if (secret) {
             token = jwt.sign({ email, user_id: user._id }, secret);
+            console.log(token, "token")
             req.session.token = token
         }
         const userData = await userModel.findByIdAndUpdate(
@@ -57,19 +58,21 @@ export const getSingleUser = async (req: Request, res: Response) => {
 }
 
 export const signout = async (req: Request, res: Response) => {
+    let {email, user_id} = req.body;
     let date = getisotime(DateTime)
     let secret = process.env.DB_AUTH_SECRET || "xtsecure" //change it
     console.log(req.headers.authorization + "*************");
+    console.log(req.session?.token, "session token");
 
     try {
-        if (!req.session?.token) {
-            res.status(400).json({ message: "Already signout" });
-            return;
-        }
+        // if (!req.session?.token) {
+        //     res.status(400).json({ message: "Already signout" });
+        //     return;
+        // }
 
-        let tokenData: any = jwt.verify(req.session.token, secret)
-        let { email, user_id } = tokenData
-        console.log(email, user_id);
+        // let tokenData: any = jwt.verify(req.session.token, secret)
+        // let { email, user_id } = tokenData
+        // console.log(email, user_id);
         let loggedinstatus = await userModel.findOneAndUpdate(
             { email }, {
             token: "",
