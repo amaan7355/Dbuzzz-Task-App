@@ -1,24 +1,29 @@
 "use client"
-import UseAppContext from "@/ContextApi/UseContext";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { enqueueSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import UseAppContext from '@/ContextApi/UseContext';
+import axios from 'axios';
+import { Spinner } from 'flowbite-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { enqueueSnackbar } from 'notistack';
+import React, { useEffect, useState } from 'react';
 
-interface updateDataType {
-  text: string
-}
-export default function Home() {
+const AddTask = () => {
+  const [title, setTitle] = useState("");
+  const [status, setStatus] = useState("");
+  const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-  const [todoList, setTodoList] = useState<any>([]);
-  const [update, setUpdate] = useState(false);
-  const [updateData, setUpdateData] = useState<updateDataType>({ text: "" });
-  const [updateIndex, setUpdateIndex] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const { setLoggedIn, setCurrentUser, currentUser, setLoadingData, loadingData } = UseAppContext();
 
   const router = useRouter();
+  const pathName = usePathname();
 
-  const { setLoggedIn, setCurrentUser, currentUser, setLoadingData } = UseAppContext();
+  useEffect(() => {
+    if (!currentUser && !loadingData) {
+      router.push("/signin");
+      setError("Please login to continue");
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     if (success != "") {
@@ -42,118 +47,123 @@ export default function Home() {
       setError('');
     }
 
-  }, [success, error])
+  }, [success, error]);
 
-  useEffect(() => {
-    if (!currentUser) {
-      router.push("/");
-      setError("Please login to continue");
-    }
-  }, [currentUser])
+  const statusOptions = [
+    {
+      id: 1,
+      status: "Done"
+    },
+    {
+      id: 2,
+      status: "Pending"
+    },
+    {
+      id: 3,
+      status: "Stuck"
+    },
+  ];
 
-
-  // const addNewTodo = async (e: any) => {
-  //   if (!e.target.value.trim()) {
-  //     return;
-  //   }
-  //   if (e.code == "Enter") {
-  //     console.log(e.target.value, "todo text");
-  //     setTodoList([{ text: e.target.value, completed: false }, ...todoList]);
-  //     e.target.value = "";
-  //   }
-  // }
-
-  const addNewTodo = async (e: any) => {
-    if (!updateData.text.trim()) return;
-
-    if (e.code === "Enter") {
-      setTodoList([{ text: updateData.text, completed: false }, ...todoList]);
-      setUpdateData({ text: "" }); // clear input
-    }
-  };
-
-  const completeIncompleteTodo = async (index: any) => {
-    let temp: any = todoList;
-    temp[index].completed = !temp[index].completed;
-    setTodoList([...temp]);
+  const handleSelectStatus = (e: any) => {
+    console.log(e.target.value, "selected status");
+    setStatus(e.target.value);
   }
 
-  const deleteTodo = async (index: any) => {
-    let temp = todoList;
-    temp.splice(index, 1);
-    setTodoList([...temp]);
-  }
-
-  const updateTodo = async (data: any, index: number) => {
-    setUpdateData(data);
-    setUpdateIndex(index);
-    setUpdate(true);
-  };
-
-  const handleUpdateTodo = async (e: any) => {
-    if (!updateData.text.trim()) return;
-
-    if (e.code === "Enter" && updateIndex !== null) {
-      const updatedList = [...todoList];
-      console.log(updatedList, "updatedList");
-      updatedList[updateIndex] = { ...updatedList[updateIndex], text: updateData.text };
-      setTodoList(updatedList);
-      setUpdate(false);
-      setUpdateIndex(null);
-      setUpdateData({ text: "" });
+  const handleAddTask = async () => {
+    if (!title.trim()) {
+      setError("Please provide task title");
+      return;
     }
-  };
+    if (!status || status == "0") {
+      setError("Please select status");
+      return;
+    }
+    try {
+      setLoading(true);
+      let token = sessionStorage.getItem('token');
+      const res = await axios.post(process.env.apiUrl + `/add-task`, {
+        user_id: currentUser?._id,
+        task: title,
+        status: status
+      }, { headers: { Authorization: `Bearer ${token}` } })
+      setSuccess(res?.data?.message);
+      setTitle("");
+      setStatus("0");
+      setLoading(false);
+      router.push("/")
+    } catch (error: any) {
+      if (error?.response?.data?.message) {
+        setError(error?.response?.data?.message);
+      } else {
+        setError("Something went wrong");
+      }
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="mx-20">
-      <h1 className="text-4xl text-center mt-5">Task App</h1>
-
-      <div className="bg-gray-400 p-5 mt-5">
-        <div className="">
-          <input
-            type="text"
-            className="bg-white w-full p-3 rounded border border-gray-300"
-            placeholder="Add your task here...."
-            value={updateData.text} // always set value
-            onChange={(e) => setUpdateData({ text: e.target.value })} // always set state
-            onKeyDown={(e) => update ? handleUpdateTodo(e) : addNewTodo(e)}
-          />
-        </div>
-
-        <div className="">
-          <ul>
-            {
-              todoList.map((data: any, index: any) => {
-                return (
-                  <div key={index} className="bg-white border border-gray-300 p-3 rounded mt-3">
-                    <div className="inline-flex">
-                      <input type="checkbox" checked={data?.completed} onChange={() => { }} />
-                      {
-                        data?.completed ? <>
-                          <del><li className="ms-2 text-lg font-medium">{data?.text}</li></del>
-                        </> : <>
-                          <li className="ms-2 text-lg font-medium">{data?.text}</li>
-                        </>
-                      }
-                    </div>
-                    <div>
-                      {
-                        data?.completed ? <>
-                          <button className="bg-orange-400 text-white px-5 py-2 rounded-lg cursor-pointer" onClick={() => completeIncompleteTodo(index)}>Mark as incomplete</button>
-                        </> : <>
-                          <button className="bg-green-600 text-white px-5 py-2 rounded-lg cursor-pointer" onClick={() => completeIncompleteTodo(index)}>Mark as complete</button>
-                          <button className="bg-blue-600 text-white px-5 py-2 rounded-lg ms-2 cursor-pointer" onClick={() => { updateTodo(data, index); setUpdate(true); }}>Update</button>
-                        </>
-                      }
-                      <button className="bg-red-600 text-white px-5 py-2 rounded-lg ms-2 cursor-pointer" onClick={() => deleteTodo(index)}>Delete</button>
-                    </div>
-                  </div>
-                )
-              })
-            }
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
+    <>
+      {
+        currentUser ? <>
+          <div className='w-[50%] mx-auto mt-20 shadow-xl bg-white p-5 rounded'>
+            <h1 className='text-3xl text-center'>Add your tasks here</h1>
+            <div className='mt-5'>
+              <div>
+                <label
+                  htmlFor="title"
+                  className="block mb-2 text-sm font-medium"
+                >
+                  Task Title
+                </label>
+                <input
+                  value={title}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                  }}
+                  type="email"
+                  name="email"
+                  id="email"
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                  placeholder="Enter your task..."
+                  required
+                />
+              </div>
+              <div className='mt-4'>
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium"
+                >
+                  Status
+                </label>
+                <select className='bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ' name="" id="" onChange={handleSelectStatus}>
+                  <option className='' value="0">--Select--</option>
+                  {
+                    statusOptions.map((item, index) => {
+                      return (
+                        <option key={index} value={item?.status}>{item?.status}</option>
+                      )
+                    })
+                  }
+                </select>
+              </div>
+              <div className='mt-5'>
+                <button className='bg-primary w-full py-2 rounded cursor-pointer' onClick={handleAddTask} disabled={loading}>
+                  {
+                    loading ? "Please wait" : "Submit"
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        </> :
+          <>
+          <div className='h-screen flex justify-center items-center'>
+            <Spinner />
+          </div>
+          </>
+      }
+    </>
+  )
 }
+
+export default AddTask

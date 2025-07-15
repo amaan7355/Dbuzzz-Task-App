@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 const taskSchema = new mongoose.Schema({
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     task: {type: String},
-    due_date: {type: String},
     status: {type: String},
     created_at: {type: String},
     updated_at: {type: String}

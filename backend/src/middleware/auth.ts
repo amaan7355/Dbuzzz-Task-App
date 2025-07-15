@@ -25,9 +25,12 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
         if (newToken && SECRET_KEY) {
             let user: any = jwt.verify(newToken, SECRET_KEY);
             console.log("verify - " + user?.email);
+            console.log("verify -> new token " + newToken + typeof(newToken));
             req.user = user;
             if (user) {
-                let user_doc = await userModel.findOne({ email: user.email, token: newToken })
+                let user_doc = await userModel.findOne({ email: user.email, token: newToken.trim() })
+                console.log(user_doc, "user_doc");
+                
                 if (user_doc) {
                     next();
                 } else {

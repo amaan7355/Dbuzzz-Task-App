@@ -39,7 +39,9 @@ export default function AppNavbar() {
                                     </Avatar>
                                 }
                             >
-                                <DropdownHeader className="p-4 cursor-pointer" onClick={() => router.push("/user-profile")}>
+                                <DropdownHeader className="p-4 cursor-pointer" 
+                                // onClick={() => router.push("/user-profile")}
+                                >
                                     <span className="block text-lg text-center">Hi, {currentUser?.name}</span>
                                     <span className="text-center block text-sm">{currentUser?.email}</span>
                                 </DropdownHeader>
@@ -50,11 +52,9 @@ export default function AppNavbar() {
                         </>
                     ) : <>
                         <div>
-                            <div className="py-2 rounded-lg px-3 me-3 inline-flex border border-gray-100 hover:bg-white hover:text-black">
-                                <button className="" onClick={() => router.push("/signin")}>
-                                    <LockOpen className="me-2" />Login
-                                </button>
-                            </div>
+                            <button className="py-2 rounded-lg px-3 me-3 inline-flex border border-gray-100 hover:bg-white hover:text-black cursor-pointer" onClick={() => router.push("/signin")}>
+                                <LockOpen className="me-2" />Get Started
+                            </button>
                         </div>
                     </>
                 }
@@ -64,10 +64,13 @@ export default function AppNavbar() {
                 <button className={`${pathname} == "/" ? 'active' : "" cursor-pointer`} onClick={() => router.push("/")}  >
                     <p className='text-lg'>Home</p>
                 </button>
-                <button className={`${pathname} == "/" ? 'active' : "" cursor-pointer`} onClick={() => router.push("/add-task")}  >
+                <button className={`${pathname} == "/add-task" ? 'active' : "" cursor-pointer`} onClick={() => router.push("/add-task")}  >
                     <p className='text-lg'>Add new task</p>
                 </button>
-                
+                <button className={`${pathname} == "/add-task" ? 'active' : "" cursor-pointer`} onClick={() => router.push("/dashboard")}  >
+                    <p className='text-lg'>Dashboard</p>
+                </button>
+
             </NavbarCollapse>
         </Navbar>
     )

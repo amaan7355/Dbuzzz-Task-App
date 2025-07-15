@@ -64,6 +64,7 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
                 variant: 'success'
             })
             sessionStorage.removeItem('user');
+            sessionStorage.removeItem('token');
             setLoggedIn(false);
             console.log('inside logout');
             setCurrentUser(null);

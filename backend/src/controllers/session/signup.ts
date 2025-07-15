@@ -3,11 +3,22 @@ import userModel from "../../models/users/userModel";
 import bcrypt from "bcrypt";
 import getisotime from "../../utils/time";
 import { DateTime } from "luxon";
+import { validateEmail, validateName, validatePassword } from "../../utils/validation";
 
 
 
 export const Signup = async (req: Request, res: Response) => {
     let { name, email, password } = req.body;
+
+    if (!validateEmail(email)) {
+        res.status(400).json({ message: "Please provide valid email." });
+        return;
+    }
+
+    if (!validatePassword(password)) {
+        res.status(400).json({ message: "Your password must be at least 8 characters long. At least one digit, one special character,  one letter (uppercase or lowercase)" });
+        return;
+    }
 
     const isExist = await userModel.findOne({ email })
     if (isExist) {
