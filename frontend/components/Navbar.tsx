@@ -17,7 +17,7 @@ export default function AppNavbar() {
         <Navbar fluid className="bg-primary text-white">
             <div className="inline-flex">
                 <>
-                    <span className="text-3xl cursor-pointer" onClick={() => router.push("/")}>
+                    <span className="lg:text-3xl md:text-xl text-lg cursor-pointer" onClick={() => router.push("/")}>
                         {/* <img src="Esport logo.png" alt="Logo" className="md:w-full md:h-20 w-32 h-14" /> */}
                         Task Management
                     </span>
@@ -61,13 +61,13 @@ export default function AppNavbar() {
                 <NavbarToggle />
             </div>
             <NavbarCollapse>
-                <button className={`${pathname} == "/" ? 'active' : "" cursor-pointer`} onClick={() => router.push("/")}  >
+                <button className={pathname == "/" ? "active cursor-pointer" : "cursor-pointer"} onClick={() => router.push("/")}  >
                     <p className='text-lg'>Home</p>
                 </button>
-                <button className={`${pathname} == "/add-task" ? 'active' : "" cursor-pointer`} onClick={() => router.push("/add-task")}  >
+                <button className={pathname == "/add-task" ? 'active cursor-pointer' : "cursor-pointer"} onClick={() => router.push("/add-task")}  >
                     <p className='text-lg'>Add new task</p>
                 </button>
-                <button className={`${pathname} == "/add-task" ? 'active' : "" cursor-pointer`} onClick={() => router.push("/dashboard")}  >
+                <button className={pathname == "/dashboard" ? 'active cursor-pointer' : "cursor-pointer"} onClick={() => router.push("/dashboard")}  >
                     <p className='text-lg'>Dashboard</p>
                 </button>
 

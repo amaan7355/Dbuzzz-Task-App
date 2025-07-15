@@ -34,3 +34,9 @@ body {
   background-color: #ffffff;
   border: 1px solid #279EFF;
 }
+
+.active {
+  font-weight: bolder;
+  border-bottom: 2px solid white;
+  /* color: blueviolet !important; */
+}

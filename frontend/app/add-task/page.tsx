@@ -105,7 +105,7 @@ const AddTask = () => {
     <>
       {
         currentUser ? <>
-          <div className='w-[50%] mx-auto mt-20 shadow-xl bg-white p-5 rounded'>
+          <div className='lg:w-[50%] md:w-[70%] w-[90%] mx-auto mt-20 shadow-xl bg-white p-5 rounded'>
             <h1 className='text-3xl text-center'>Add your tasks here</h1>
             <div className='mt-5'>
               <div>

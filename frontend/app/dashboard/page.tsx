@@ -40,6 +40,7 @@ const Dashboard = () => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
+    const [dataLoading, setDataLoading] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [option, setOption] = useState<number>();
     const [editTitle, setEditTitle] = useState("");
@@ -89,7 +90,7 @@ const Dashboard = () => {
     }, [success, error]);
 
     useEffect(() => {
-        if(currentUser){
+        if (currentUser) {
             getAllTasks();
         }
     }, [currentUser])
@@ -97,13 +98,16 @@ const Dashboard = () => {
 
     const getAllTasks = async () => {
         try {
+            setDataLoading(true);
             const token = sessionStorage.getItem("token")
             const res = await axios.post(process.env.apiUrl + `/get-all-tasks-user`, {
                 user_id: currentUser?._id
             }, { headers: { Authorization: `Bearer ${token}` } });
             setTasks(res?.data?.result);
+            setDataLoading(false);
         } catch (error) {
-
+            setDataLoading(false);
+            console.log(error);
         }
     };
 
@@ -127,7 +131,7 @@ const Dashboard = () => {
     const DeleteTaskAlert = (task_id: any) => {
         Swal.fire({
             title: "Are you sure?",
-            text: "Do you want to delete this question?",
+            text: "Do you want to delete this task?",
             // icon: "info",
             showCancelButton: true,
             confirmButtonColor: "#d33",
@@ -169,7 +173,7 @@ const Dashboard = () => {
     }
 
     const handleUpdateTask = async () => {
-        if(editStatus == "0"){
+        if (editStatus == "0") {
             setError("Please select status");
             return;
         }
@@ -180,7 +184,7 @@ const Dashboard = () => {
                 task_id: editTaskId,
                 task: editTitle,
                 status: editStatus
-            }, {headers: {Authorization: `Bearer ${token}`}})
+            }, { headers: { Authorization: `Bearer ${token}` } })
             setSuccess(res?.data?.message);
             setEditTaskId("");
             setEditStatus("");
@@ -189,9 +193,9 @@ const Dashboard = () => {
             setLoading(false);
             setOpenEditModel(false);
         } catch (error: any) {
-            if(error?.response?.data?.message){
+            if (error?.response?.data?.message) {
                 setError(error?.response?.data?.message);
-            }else{
+            } else {
                 setError("Something went wrong");
             }
             setLoading(false);
@@ -203,106 +207,114 @@ const Dashboard = () => {
             <div className="px-6 py-4 border-b">
                 <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
             </div>
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 text-sm">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            {['Task', 'Action', 'Owner', 'Status'].map((header) => (
-                                <th
-                                    key={header}
-                                    className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                    {header}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 bg-white">
-                        {data.map((task: any, index: any) => (
-                            <tr key={index} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 text-gray-700">{task.task}</td>
-                                <td className="px-4 py-4 cursor-pointer  relative">
-                                    <button
-                                        onClick={() => {
-                                            if (option == index + 1) {
-                                                setOption(0);
-                                            } else {
-                                                setOption(index + 1);
-                                            }
-                                        }}
-                                        className="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none "
-                                        type="button"
-                                    >
-                                        <MoreHoriz className="text-orange-500 z-10" />
-                                    </button>
-                                    {option == index + 1 ? (
-                                        <ClickAwayListener
-                                            onClickAway={() => {
-                                                setOption(0);
-                                            }}
+            {
+                data.length > 0 ? <>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200 text-sm">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    {['Task', 'Action', 'Owner', 'Status'].map((header) => (
+                                        <th
+                                            key={header}
+                                            className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider"
                                         >
-                                            <div className={`${(data.length - 1) == index ? "left-14 bottom-5" : "left-14 top-9"} absolute border border-gray-100 w-28 bg-white rounded divide-y divide-gray-100 shadow}`} style={{ zIndex: 100 }}>
-                                                <ul
-                                                    className=" text-sm text-gray-700 cursor-pointer"
-                                                    aria-labelledby="apple-imac-20-dropdown-button"
+                                            {header}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                                {data.map((task: any, index: any) => (
+                                    <tr key={index} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 text-gray-700">{task.task}</td>
+                                        <td className="px-4 py-4 cursor-pointer  relative">
+                                            <button
+                                                onClick={() => {
+                                                    if (option == index + 1) {
+                                                        setOption(0);
+                                                    } else {
+                                                        setOption(index + 1);
+                                                    }
+                                                }}
+                                                className="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none "
+                                                type="button"
+                                            >
+                                                <MoreHoriz className="text-orange-500 z-10" />
+                                            </button>
+                                            {option == index + 1 ? (
+                                                <ClickAwayListener
+                                                    onClickAway={() => {
+                                                        setOption(0);
+                                                    }}
                                                 >
-                                                    <li
-                                                        onClick={() => {
-                                                            setOption(0);
-                                                            editTask(task);
-                                                        }}
-                                                    >
-                                                        <div className="inline-flex hover:bg-gray-100 w-full ps-4">
-                                                            <Edit className="mt-2" htmlColor="orange" />
-                                                            <span className="block py-2 px-4 cursor-pointer text-center">
-                                                                Edit
-                                                            </span>
-                                                        </div>
-                                                    </li>
+                                                    <div className={`${(data.length - 1) == index ? "left-14 bottom-5" : "left-14 top-9"} absolute border border-gray-100 w-28 bg-white rounded divide-y divide-gray-100 shadow}`} style={{ zIndex: 100 }}>
+                                                        <ul
+                                                            className=" text-sm text-gray-700 cursor-pointer"
+                                                            aria-labelledby="apple-imac-20-dropdown-button"
+                                                        >
+                                                            <li
+                                                                onClick={() => {
+                                                                    setOption(0);
+                                                                    editTask(task);
+                                                                }}
+                                                            >
+                                                                <div className="inline-flex hover:bg-gray-100 w-full ps-4">
+                                                                    <Edit className="mt-2" htmlColor="orange" />
+                                                                    <span className="block py-2 px-4 cursor-pointer text-center">
+                                                                        Edit
+                                                                    </span>
+                                                                </div>
+                                                            </li>
 
-                                                    <li
-                                                        onClick={() => {
-                                                            DeleteTaskAlert(task?._id)
-                                                            setOption(0);
-                                                        }}
-                                                    >
-                                                        <span className="block py-2 px-4 hover:bg-gray-100 cursor-pointer">
-                                                            <Cancel className="me-3" fontSize="small" sx={{ color: "red" }} />
-                                                            Delete
-                                                        </span>
-                                                    </li>
-                                                </ul>
+                                                            <li
+                                                                onClick={() => {
+                                                                    DeleteTaskAlert(task?._id)
+                                                                    setOption(0);
+                                                                }}
+                                                            >
+                                                                <span className="block py-2 px-4 hover:bg-gray-100 cursor-pointer">
+                                                                    <Cancel className="me-3" fontSize="small" sx={{ color: "red" }} />
+                                                                    Delete
+                                                                </span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </ClickAwayListener>
+                                            ) : (
+                                                ""
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className='flex'>
+                                                <div className="w-6 h-6 rounded-full overflow-hidden">
+                                                    <Image
+                                                        src="/avatar.png"
+                                                        alt="Owner"
+                                                        width={32}
+                                                        height={32}
+                                                        className="object-cover"
+                                                    />
+                                                </div>
+                                                <div className='my-auto ms-1'>
+                                                    {task?.user_id?.name}
+                                                </div>
                                             </div>
-                                        </ClickAwayListener>
-                                    ) : (
-                                        ""
-                                    )}
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className='flex'>
-                                        <div className="w-6 h-6 rounded-full overflow-hidden">
-                                            <Image
-                                                src="/avatar.png"
-                                                alt="Owner"
-                                                width={32}
-                                                height={32}
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                        <div className='my-auto ms-1'>
-                                            {task?.user_id?.name}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className={getStatusStyle(task.status)}>{task.status}</span>
-                                </td>
-                                {/* <td className="px-6 py-4 text-gray-600">{task.dueDate}</td> */}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={getStatusStyle(task.status)}>{task.status}</span>
+                                        </td>
+                                        {/* <td className="px-6 py-4 text-gray-600">{task.dueDate}</td> */}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </> : <>
+                    <div className='p-5 text-center'>
+                        Oops! You haven’t added a task yet. Let’s get started. <span className='underline text-blue-500 cursor-pointer' onClick={() => router.push("/add-task")}>Create a task</span>
+                    </div>
+                </>
+            }
         </div>
     );
 
