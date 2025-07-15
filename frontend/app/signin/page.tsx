@@ -85,7 +85,7 @@ export default function Page() {
   return (
     <>
 
-      <div className="w-[50%] mt-20 mx-auto border border-gray-100">
+      <div className="lg:w-[50%] md:w-[70%] w-[90%] mt-20 mx-auto border border-gray-100">
         <div className="p-5 bg-white rounded-lg shadow-xl">
           <h2 className="text-2xl font-bold">
             Sign in to Task App

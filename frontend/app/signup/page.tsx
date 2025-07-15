@@ -86,13 +86,13 @@ export default function Page() {
 
     return (
         <>
-            <div className="w-[50%] mt-20 mx-auto">
+            <div className="lg:w-[50%] md:w-[70%] w-[90%] mt-20 mx-auto">
 
-                <div className="p-8 bg-white rounded-lg shadow-xl">
+                <div className="p-8 bg-white rounded-lg shadow-xl mb-10">
                     <h2 className="text-2xl font-bold">
                         Sign up to Task App
                     </h2>
-                    <div className="mt-5 space-y-6 grid grid-cols-2 gap-x-4">
+                    <div className="mt-5 space-y-6 grid lg:grid-cols-2 gap-x-4">
                         <div>
                             <label
                                 htmlFor="name"
