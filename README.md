@@ -11,5 +11,34 @@ A full-stack Task Management application built using the MERN stack with modern 
 
 ---
 
-## 📁 Project Structure
+
+---
+
+## 🛠️ Technologies Used
+
+### ⚛️ Frontend
+- **Next.js** – React framework with SSR support
+- **Tailwind CSS** – Utility-first CSS framework for rapid UI development
+- **Material UI** – Component-based UI library
+- **Flowbite** – Tailwind-based UI components
+- **Context API** – Global state management
+- **JWT (Token-based Auth)** – Used for secure session handling
+
+### 🌐 Backend
+- **Node.js & Express.js** – Server-side runtime and framework
+- **MongoDB & Mongoose** – NoSQL database and object modeling
+- **JWT** – Secure user authentication
+- **dotenv** – Environment variable management
+- **CORS** – Cross-Origin Resource Sharing
+
+---
+
+## ⚙️ How to Run the App Locally
+
+### 1. Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd <repo-name>
+
 
