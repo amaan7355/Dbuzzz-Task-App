@@ -11,9 +11,6 @@ A full-stack Task Management application built using the MERN stack with modern 
 
 ---
 
-
----
-
 ## 🛠️ Technologies Used
 
 ### ⚛️ Frontend
@@ -39,6 +36,9 @@ A full-stack Task Management application built using the MERN stack with modern 
 
 ```bash
 git clone <your-repo-url>
-cd <repo-name>
+cd folder name (fronrend or backend)
+npm i
+npm run dev
+
 
 
